@@ -166,22 +166,47 @@ public class LinkedList {
         Node slow = head;
         Node fast = head;
 
-        while (fast.next != null){
+        while (fast != null && fast.next != null){
             slow = slow.next;
             fast = fast.next.next;
         }
         return slow;
     }
+    boolean palindrome(){
+        if (head == null || head.next == null){
+            return true;
+        }
+        //find mid node
+        Node midnode = midnode();
+        //2nd half reverse
+        Node prev = null;
+        Node curr = midnode;
+        Node next = midnode.next;
+        while(curr != null){
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        Node right = prev;
+        Node left = head;
+        //Check if left half equals the right half
+        while (right != null){
+            if (right.data != left.data){
+                return false;
+            }
+            right = right.next;
+            left = left.next;
+        }
+        return true;
+    }
     public static void main(String args[]){
         LinkedList ll = new LinkedList();
         ll.addFirst(2);
         ll.addFirst(1);
-        ll.addLast(3);
-        ll.addLast(4);
-        ll.add(2, 7);
+        ll.addLast(2);
+        ll.addLast(2);
 
-        ll.print();
-        ll.revremove(3);
-        ll.print();
+        System.out.println(ll.palindrome());
     }
 }
