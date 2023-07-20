@@ -134,6 +134,7 @@ public class LinkedList {
     }
 
     int recsearch(int key){
+
         return helper(head, key);
     }
 
@@ -200,13 +201,176 @@ public class LinkedList {
         }
         return true;
     }
+
+    boolean islooping(){
+        Node slow = head;
+        Node fast = head;
+        while (fast != null && fast.next != null){
+            slow = slow.next;
+            fast = fast.next.next;
+            if(slow == fast){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void removeloop() {
+        Node slow = head;
+        Node fast = head;
+        boolean looping = false;
+        while (fast != null || fast.next == null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) {
+                looping = true;
+                break;
+            }
+        }
+        if (!looping) {
+            return;
+        }
+        slow = head;
+        Node prev = null;
+        while (slow != fast) {
+            slow = slow.next;
+            fast = fast.next;
+            prev = fast;
+        }
+        // Update the next field of the last node in the loop to null
+        prev.next = null;
+    }
+    public Node merge(Node newLeft, Node newRight){
+        //Initialize a new ll with a dummy head node (-1)
+        Node mergeLL = new Node(-1);
+        Node temp = mergeLL;
+
+        while (newLeft != null && newRight != null){
+            if (newLeft.data <= newRight.data){
+                temp.next = newLeft;
+                //to move the newLeft LL to the next
+                newLeft = newLeft.next;
+                //to move to the next node of the temporary LL
+                temp = temp.next;
+            } else {
+                temp.next = newRight;
+                newRight = newRight.next;
+                temp = temp.next;
+            }
+        }
+        while (newLeft != null){
+            temp.next = newLeft;
+            //to move the newLeft LL to the next
+            newLeft = newLeft.next;
+            //to move to the next node of the temporary LL
+            temp = temp.next;
+        }
+        while (newRight != null){
+            temp.next = newRight;
+            newRight = newRight.next;
+            temp = temp.next;
+        }
+
+        return mergeLL.next;
+    }
+    Node mergesort(Node head){
+        //edge case
+        if (head == null || head.next == null){
+            return head;
+        }
+        //finding the mid-node
+        Node mid = findmid();
+        //seperating the ll into two halfs
+        Node rightHead = mid.next;
+        mid.next = null;
+
+        Node newLeft = mergesort(head);
+        Node newRight = mergesort(rightHead);
+
+        //merge
+        return merge(newLeft, newRight);
+    }
+    //function that finds the first node of the right half
+    Node findmid(){
+        Node slow = head;
+        Node fast = head.next;
+
+        while (fast != null && fast.next != null){
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        return slow;
+    }
+    //Function that returns the last node of the first half
+    Node findmidlf(){
+        Node slow = head;
+        Node fast = head;
+        while (fast != null && fast.next != null){
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+    void zigzag(){
+        //1. Finding the mid-point
+        Node mid = findmidlf();
+        //2. 2nd half reverse
+        //Left half
+        Node prev = null;
+        Node curr = mid.next;
+        Node next;
+        mid.next = null;
+        while ( curr != null){
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        Node RH = prev;
+        Node LH = head;
+        //3. Alternate Merging
+        Node nextL, nextR;
+
+        while (LH != null && RH != null){
+            //zig zagging steps
+            nextL = LH.next;
+            LH.next = RH;
+            nextR = RH.next;
+            RH.next = nextL;
+            //updating steps
+            LH = nextL;
+            RH = nextR;
+        }
+
+    }
+
+    void delNafterM(int M, int N){
+        Node temp = head;
+        Node temp2;
+
+        while (temp != null){
+            for (int i = 0; i < M - 1; i++){
+                if (temp == null){
+                    return;
+                }
+                temp = temp.next;
+            }
+            if (temp == null){
+                return;
+            }
+            temp2 = temp;
+            for (int j = 0; j < N; j++){
+                if (temp.next == null){
+                    return;
+                }
+                temp = temp.next;
+            }
+            temp2.next = temp.next;
+            temp = temp.next;
+        }
+    }
     public static void main(String args[]){
         LinkedList ll = new LinkedList();
-        ll.addFirst(2);
-        ll.addFirst(1);
-        ll.addLast(2);
-        ll.addLast(2);
-
-        System.out.println(ll.palindrome());
     }
 }
