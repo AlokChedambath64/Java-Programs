@@ -1,3 +1,4 @@
+import java.util.*;
 public class BST {
     static class Node {
         int data;
@@ -85,6 +86,64 @@ public class BST {
         }
         return root;
     }
+
+    public static void printInRange(Node root, int k1, int k2){
+        if (root == null){
+            return;
+        }
+        if (root.data >= k1 && root.data <= k2){
+            printInRange(root.left, k1, k2);
+            System.out.print(root.data + " ");
+            printInRange(root.right, k1, k2);
+        }else if (root.data > k2){
+            printInRange(root.left, k1, k2);
+        } else {
+            printInRange(root.right, k1, k2);
+        }
+    }
+
+    public static void printPath(ArrayList<Integer> path){
+        //function to print the elements inside the arraylist
+        for (int i = 0; i < path.size(); i++){
+            System.out.print(path.get(i)+"->");
+        }
+        System.out.println("Null");
+    }
+    public static void printRoot2Leaf(Node root, ArrayList<Integer> path){
+        //base case that checks whether the current root is null
+        if (root == null){
+            return;
+        }
+        //adding the data in the root to the array list
+        path.add(root.data);
+        //to check if the root is the last node
+        if(root.left == null && root.right == null){
+            printPath(path);
+        }
+        //to traverse to the left child
+        printRoot2Leaf(root.left, path);
+        //to traverse to the right child
+        printRoot2Leaf(root.right, path);
+        //removing last node after the path has been printed
+        path.remove(path.size() - 1);
+    }
+
+    public static boolean isValidBST(Node root, Node min, Node max){
+        //if we go past the leaf node
+        if (root == null){
+            return true;
+        }
+        //if the nodes on the right of the tree fail the test
+        if (min != null && root.data <= min.data){
+            return false;
+        }
+        //if the nodes on the left of the tree fail the test
+        else if (max != null && root.data >= max.data){
+            return false;
+        }
+        //checks both the left side and right side of the binary tree
+        return isValidBST(root.left, min, root) && isValidBST(root.right, root, max);
+    }
     public static void main(String[] args){
         int values[] = {8, 5, 3, 1, 4, 6, 10, 11, 14};
         Node root = null;
@@ -92,5 +151,21 @@ public class BST {
         for (int i = 0; i < values.length; i++){
             root = insert(root, values[i]);
         }
+
+        //inorder(root);
+        //System.out.println();
+
+        System.out.println(search(root, 11));
+
+        root = delete(root, 10);
+
+        inorder(root);
+        System.out.println();
+        printInRange(root, 5, 12);
+
+        System.out.println();
+
+        ArrayList<Integer> arr = new ArrayList<>();
+        printRoot2Leaf(root, arr);
     }
 }
